@@ -5,7 +5,7 @@ const appointmentRouter = require('./appointments')
 
 const router = express.Router()
 
-const {pretect, authorize} = require('../middleware/auth')
+const {protect, authorize} = require('../middleware/auth')
 
 router.use('/:carId/appointments/', appointmentRouter)
 

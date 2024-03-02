@@ -15,7 +15,7 @@ exports.getCars = async (req, res, next) => {
 
   let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-  query = Hospital.find(JSON,parse(queryStr)).populate('appointments');
+  query = Car.find(JSON.parse(queryStr)).populate('appointments');
 
   if(req.query.select) {
     const fields = req.query.select.split(',').join(' ');
@@ -105,7 +105,7 @@ exports.createCar = async (req, res, next) => {
 //@desc   Update car
 //@route  PUT /api/v1/cars/:id
 //@access Private
-exports.updateHospital = async (req, res, next) => {
+exports.updateCar = async (req, res, next) => {
   try {
     const car = await Car.findByIdAndUpdate(req.params,id, req.body, {
       new: true,
