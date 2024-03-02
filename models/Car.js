@@ -31,14 +31,14 @@ const CarSchema = new mongoose.Schema({
 })
 
 CarSchema.pre('deleteOne', {document:true, query:false}, async function(next) {
-  console.log(`Appointments being removed from car ${this._id}`);
-  await this.model('Appointment').deleteMany({car: this._id});
+  console.log(`Bookings being removed from car ${this._id}`);
+  await this.model('Booking').deleteMany({car: this._id});
   next();
 })
 
 // Reverse populate with virtuals
-CarSchema.virtual('appointments', {
-  ref: 'Appointment',
+CarSchema.virtual('bookings', {
+  ref: 'Booking',
   localField: '_id',
   foreignField: 'car',
   justOne: false

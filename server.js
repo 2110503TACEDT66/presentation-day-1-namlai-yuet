@@ -20,7 +20,7 @@ connectDB();
 //Route files
 const cars = require('./routes/cars');
 const auth = require('./routes/auth');
-const appointments = require('./routes/appointments')
+const bookings = require('./routes/bookings')
 
 //Body parser
 app.use(express.json());
@@ -53,7 +53,7 @@ app.use(cors());
 //Mount routers
 app.use('/api/v1/cars', cars);
 app.use('/api/v1/auth',auth);
-app.use('/api/v1/appointments',appointments);
+app.use('/api/v1/bookings',bookings);
 
 
 const PORT = process.env.PORT || 5000;
