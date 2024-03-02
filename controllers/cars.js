@@ -60,11 +60,11 @@ exports.getCars = async (req, res, next) => {
       success: true,
       count: cars.length,
       data: cars
-    })
+    });
   } catch(err) {
     res.status(400).json({
       success: false
-    })
+    });
   }
 }
 
@@ -73,23 +73,22 @@ exports.getCars = async (req, res, next) => {
 //@access Public
 exports.getCar = async (req, res, next) => {
   try {
-    const car = await Car.findById(req.param.id);
+    const car = await Car.findById(req.params.id);
 
-    if(!car)
-      return res.status(400).json({
-        success: false
-      })
+    if (!car) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
 
     res.status(200).json({
       success: true,
       data: car
-    })
+    });
   } catch(err) {
-    res.status(400).json({
-      success: false
-    })
+    console.error(err.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
-}
+};
+
 
 //@desc   Create new car
 //@route  POST /api/v1/cars/
@@ -107,7 +106,7 @@ exports.createCar = async (req, res, next) => {
 //@access Private
 exports.updateCar = async (req, res, next) => {
   try {
-    const car = await Car.findByIdAndUpdate(req.params,id, req.body, {
+    const car = await Car.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     })
