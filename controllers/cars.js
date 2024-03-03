@@ -1,4 +1,5 @@
 const Car = require('../models/Car');
+const User = require('../models/User');
 
 //@desc   Get all cars
 //@route  GET /api/v1/cars
@@ -19,7 +20,12 @@ exports.getCars = async (req, res, next) => {
 
   if(req.query.select) {
     const fields = req.query.select.split(',').join(' ');
-    query = query.select(fields);
+    if(req.user.role !== 'admin') {
+      query = query.find({user:req.user.id}).select(fields);
+    }
+    else {
+      query = query.select(fields);
+    }
   }
 
   if(req.query.sort) {
@@ -70,7 +76,7 @@ exports.getCars = async (req, res, next) => {
 
 //@desc   Get single car
 //@route  GET /api/v1/cars/:id
-//@access Public
+//@access Private
 exports.getCar = async (req, res, next) => {
   try {
     const car = await Car.findById(req.params.id);
@@ -95,6 +101,7 @@ exports.getCar = async (req, res, next) => {
 //@access Private
 exports.createCar = async (req, res, next) => {
   const car = await Car.create(req.body);
+  car["provider"] = req.user.id;
   res.status(201).json({
     success: true,
     data: car
@@ -106,16 +113,25 @@ exports.createCar = async (req, res, next) => {
 //@access Private
 exports.updateCar = async (req, res, next) => {
   try {
-    const car = await Car.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    })
+    let car = await Car.findById(req.params.id);
 
     if(!car)
       return res.status(400).json({
         success: false
       })
+
+    if(car.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(401).json({
+        success:false,
+        message:`User ${req.user.id} is not authorized to update this car`
+      })
+    }
     
+    car = await Car.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    })
+
     res.status(200).json({
       success: true,
       data: car
@@ -138,6 +154,13 @@ exports.deleteCar = async (req, res, next) => {
       return res.status(400).json({
         success: false,
       })
+
+    if(car.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(401).json({
+        success:false,
+        message:`User ${req.user.id} is not authorized to delete this car`
+      });
+    }
     
     await car.deleteOne();
     res.status(200).json({

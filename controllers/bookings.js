@@ -11,23 +11,32 @@ exports.getBookings = async (req, res, next)=> {
     if(req.user.role !== 'admin') {
         query = Booking.find({user:req.user.id}).populate({
             path: 'car',
-            select: 'provider_name car_brand car_model color license'
-        });
+                select: 'provider car_brand car_model color license',
+                populate: {
+                    path: 'provider',
+                    select: 'name tel email'
+        }});
     } else { // If you are an admin, you can see all
         if (req.params.carId) {
             console.log(req.params.carId);
-            query = Booking.find({car: req.params.carId}).populate({
+            query = Booking.find({user:req.user.id}).populate({
                 path: 'car',
-                select: 'provider_name car_brand car_model color license'
-            }).populate({
+                    select: 'provider car_brand car_model color license',
+                    populate: {
+                        path: 'provider',
+                        select: 'name tel email'
+            }}).populate({
                 path: 'user',
                 select: 'name tel email'
             });
         } else {
-            query = Booking.find().populate({
+            query = Booking.find({user:req.user.id}).populate({
                 path: 'car',
-                select: 'provider_name car_brand car_model color license'
-            }).populate({
+                    select: 'provider car_brand car_model color license',
+                    populate: {
+                        path: 'provider',
+                        select: 'name tel email'
+            }}).populate({
                 path: 'user',
                 select: 'name tel email'
             });
@@ -49,13 +58,16 @@ exports.getBookings = async (req, res, next)=> {
 
 //@desc     GET single booking
 //@route    GET /api/v1/bookings/:id
-//@access   Public
+//@access   Private
 exports.getBooking = async (req, res, next)=> {
     try {
         const booking = await Booking.findById(req.params.id).populate({
             path: 'car',
-            select: 'provider_name car_brand car_model color license'
-        });
+                    select: 'provider car_brand car_model color license',
+                    populate: {
+                        path: 'provider',
+                        select: 'name tel email'
+        }});
 
         if(!booking) {
             return res.status(404).json({success: false, message: `No booking with the id of ${req.params.id}`});
