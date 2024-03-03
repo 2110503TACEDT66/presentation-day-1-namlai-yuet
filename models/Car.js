@@ -20,9 +20,10 @@ const CarSchema = new mongoose.Schema({
     unique: true,
     maxlength: [10, 'License can not be more than 10 characters'],
   },
-  provider_name: {
-    type: String,
-    required: [true, 'Please add a provider name'],
+  provider: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    require: true
   }
 },
 {
