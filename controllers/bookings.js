@@ -19,8 +19,7 @@ exports.getBookings = async (req, res, next)=> {
             query = Booking.find({car: req.params.carId}).populate({
                 path: 'car',
                 select: 'provider_name car_brand car_model color license'
-            },
-            {
+            }).populate({
                 path: 'user',
                 select: 'name tel email'
             });
@@ -28,8 +27,7 @@ exports.getBookings = async (req, res, next)=> {
             query = Booking.find().populate({
                 path: 'car',
                 select: 'provider_name car_brand car_model color license'
-            },
-            {
+            }).populate({
                 path: 'user',
                 select: 'name tel email'
             });
@@ -99,7 +97,7 @@ exports.addBooking = async (req,res,next) => {
         }
 
         const booking = await Booking.create(req.body);
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             data: booking
         });
@@ -117,11 +115,11 @@ exports.updateBooking = async (req, res, next)=> {
         let booking = await Booking.findById(req.params.id);
 
         if(!booking) {
-            return res.status(404).json({success: false, message: `No appt with the id of ${req.params.id}`});
+            return res.status(404).json({success: false, message: `No booking with the id of ${req.params.id}`});
         }
 
         //Make sure user is the booking owner
-        if(booking.user.toString !== req.user.id && req.user.role !== 'admin'){
+        if(booking.user.toString() !== req.user.id && req.user.role !== 'admin'){
             return res.status(401).json({success: false, message: `User ${req.user.id} is not authorized to update this booking`});
         }
 
@@ -148,7 +146,7 @@ exports.deleteBooking = async (req, res, next)=> {
         const booking = await Booking.findById(req.params.id);
 
         if(!booking) {
-            return res.status(404).json({success: false, message: `No appt with id ${req.params.id}`});
+            return res.status(404).json({success: false, message: `No booking with id ${req.params.id}`});
         }
 
         //Make sure user is the booking owner

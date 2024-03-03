@@ -1,19 +1,23 @@
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
-    apptDate: {
-        type: Date,
-        require: true
-    },
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        require: true
+        required: true
     },
     car: {
         type: mongoose.Schema.ObjectId,
         ref: 'Car',
-        require: true
+        required: true
+    },
+    PickUpDate:{
+        type: Date,
+        required: true
+    },
+    DropOffDate:{
+        type: Date,
+        required: true
     },
     createdAt: {
         type: Date,
