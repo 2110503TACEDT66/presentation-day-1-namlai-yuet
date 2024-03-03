@@ -23,7 +23,7 @@ const CarSchema = new mongoose.Schema({
   provider: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    require: true
+    required: true
   }
 },
 {

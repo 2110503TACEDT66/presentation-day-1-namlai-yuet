@@ -17,15 +17,10 @@ exports.getCars = async (req, res, next) => {
   let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
   query = Car.find(JSON.parse(queryStr)).populate('bookings');
-
+  
   if(req.query.select) {
     const fields = req.query.select.split(',').join(' ');
-    if(req.user.role !== 'admin') {
-      query = query.find({user:req.user.id}).select(fields);
-    }
-    else {
-      query = query.select(fields);
-    }
+    query = query.select(fields);
   }
 
   if(req.query.sort) {
@@ -100,8 +95,8 @@ exports.getCar = async (req, res, next) => {
 //@route  POST /api/v1/cars/
 //@access Private
 exports.createCar = async (req, res, next) => {
-  const car = await Car.create(req.body);
-  car["provider"] = req.user.id;
+  const car = await Car.create({...req.body,provider: req.user.id});
+  
   res.status(201).json({
     success: true,
     data: car
@@ -116,11 +111,11 @@ exports.updateCar = async (req, res, next) => {
     let car = await Car.findById(req.params.id);
 
     if(!car)
-      return res.status(400).json({
+      return res.status(404).json({
         success: false
       })
 
-    if(car.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    if(car.provider.toString() !== req.user.id && req.user.role === 'user') {
       return res.status(401).json({
         success:false,
         message:`User ${req.user.id} is not authorized to update this car`
@@ -155,7 +150,7 @@ exports.deleteCar = async (req, res, next) => {
         success: false,
       })
 
-    if(car.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    if(car.provider.toString() !== req.user.id && req.user.role === 'user') {
       return res.status(401).json({
         success:false,
         message:`User ${req.user.id} is not authorized to delete this car`

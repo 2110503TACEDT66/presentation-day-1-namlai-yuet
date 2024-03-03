@@ -8,7 +8,7 @@ const Car = require('../models/Car');
 exports.getBookings = async (req, res, next)=> {
     let query;
     //General users can see only their bookings
-    if(req.user.role !== 'admin') {
+    if(req.user.role === 'user') {
         query = Booking.find({user:req.user.id}).populate({
             path: 'car',
                 select: 'provider car_brand car_model color license',
@@ -16,10 +16,18 @@ exports.getBookings = async (req, res, next)=> {
                     path: 'provider',
                     select: 'name tel email'
         }});
+    } else if (req.user.role === 'provider') { // If you are a provider, you can see only booking that booked your car
+        query = Booking.find({'car.provider': req.user.id}).populate({
+            path: 'car',
+            select: 'car_brand car_model color license',
+        }).populate({
+            path: 'user',
+            select: 'name tel email'
+        });
     } else { // If you are an admin, you can see all
         if (req.params.carId) {
             console.log(req.params.carId);
-            query = Booking.find({user:req.user.id}).populate({
+            query = Booking.find({car:req.params.carId}).populate({
                 path: 'car',
                     select: 'provider car_brand car_model color license',
                     populate: {
@@ -30,7 +38,7 @@ exports.getBookings = async (req, res, next)=> {
                 select: 'name tel email'
             });
         } else {
-            query = Booking.find({user:req.user.id}).populate({
+            query = Booking.find().populate({
                 path: 'car',
                     select: 'provider car_brand car_model color license',
                     populate: {
