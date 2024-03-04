@@ -11,6 +11,11 @@ const BookingSchema = new mongoose.Schema({
         ref: 'Car',
         required: true
     },
+    provider:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
+    },
     PickUpDate:{
         type: Date,
         required: true

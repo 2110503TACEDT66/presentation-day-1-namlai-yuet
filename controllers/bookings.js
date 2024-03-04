@@ -17,7 +17,7 @@ exports.getBookings = async (req, res, next)=> {
                     select: 'name tel email'
         }});
     } else if (req.user.role === 'provider') { // If you are a provider, you can see only booking that booked your car
-        query = Booking.find({'car.provider': req.user.id}).populate({
+        query = Booking.find({provider: req.user.id}).populate({
             path: 'car',
             select: 'car_brand car_model color license',
         }).populate({
@@ -103,9 +103,10 @@ exports.addBooking = async (req,res,next) => {
             return res.status(404).json({success:false, message: `No car with the id of ${req.params.carId}`});
         }
 
-        //add userId to req.body
+        //add userId & providerId from car to req.body
         if (req.user.role !== 'admin') {
             req.body.user = req.user.id;
+            req.body.provider = car.provider;
         }
 
         //check for existed booking
