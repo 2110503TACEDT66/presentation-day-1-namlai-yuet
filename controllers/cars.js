@@ -115,7 +115,7 @@ exports.updateCar = async (req, res, next) => {
         success: false
       })
 
-    if(car.provider.toString() !== req.user.id && req.user.role === 'user') {
+    if(req.user.role === 'user' || (car.provider.toString() !== req.user.id && req.user.role === 'provider')) {
       return res.status(401).json({
         success:false,
         message:`User ${req.user.id} is not authorized to update this car`
@@ -150,7 +150,7 @@ exports.deleteCar = async (req, res, next) => {
         success: false,
       })
 
-    if(car.provider.toString() !== req.user.id && req.user.role === 'user') {
+    if(req.user.role === 'user' || (car.provider.toString() !== req.user.id && req.user.role === 'provider')) {
       return res.status(401).json({
         success:false,
         message:`User ${req.user.id} is not authorized to delete this car`
