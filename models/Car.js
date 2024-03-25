@@ -20,6 +20,9 @@ const CarSchema = new mongoose.Schema({
     unique: true,
     maxlength: [10, 'License can not be more than 10 characters'],
   },
+  picture: {
+    type: String,
+  },
   provider: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
