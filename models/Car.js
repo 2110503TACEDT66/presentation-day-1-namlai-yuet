@@ -23,6 +23,9 @@ const CarSchema = new mongoose.Schema({
   picture: {
     type: String,
   },
+  dayRate: {
+    type: String,
+  },
   provider: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
