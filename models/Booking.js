@@ -14,14 +14,25 @@ const BookingSchema = new mongoose.Schema({
     provider:{
         type: mongoose.Schema.ObjectId,
         ref: 'User',
+    },
+    carModel:{
+        type: String,
         required: true
     },
-    PickUpDate:{
+    pickupDate:{
         type: Date,
         required: true
     },
-    DropOffDate:{
+    pickupLocation:{
+        type: String,
+        required: true
+    },
+    returnDate:{
         type: Date,
+        required: true
+    },
+    returnLocation:{
+        type: String,
         required: true
     },
     createdAt: {

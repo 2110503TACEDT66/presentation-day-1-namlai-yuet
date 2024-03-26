@@ -37,13 +37,6 @@ app.use(helmet());
 //Prevent XSS attacks
 app.use(xss());
 
-//Rate Limiting
-const limiter = rateLimit ({
-    windowsMs: 10*60*1000, //10 mins
-    max: 100
-});
-app.use(limiter);
-
 //Prevent http param pollutions
 app.use(hpp());
 
